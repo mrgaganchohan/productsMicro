@@ -1,9 +1,6 @@
 package com.productmicro.micro.Entities;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
 public class Product {
@@ -13,10 +10,11 @@ public class Product {
     private String productId;
     private String name;
     private String brand;
-    private int category_id;
+    private int categoryId;
     private float rating;
     private String imageName;
 
+    // --------------ManyToOne Relation below
     public void setId(int id) {
         this.id = id;
     }
@@ -33,8 +31,8 @@ public class Product {
         this.brand = brand;
     }
 
-    public void setCategory_id(int category_id) {
-        this.category_id = category_id;
+    public void setCategoryId(int categoryId) {
+        this.categoryId = categoryId;
     }
 
     public void setRating(float rating) {
@@ -61,8 +59,8 @@ public class Product {
         return brand;
     }
 
-    public int getCategory_id() {
-        return category_id;
+    public int getCategoryId() {
+        return categoryId;
     }
 
     public float getRating() {
@@ -72,4 +70,6 @@ public class Product {
     public String getImageName() {
         return imageName;
     }//
+
 }
+
