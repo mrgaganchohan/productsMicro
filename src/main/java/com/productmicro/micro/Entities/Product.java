@@ -10,9 +10,9 @@ public class Product {
     private String productId;
     private String name;
     private String brand;
-    private int categoryId;
+    private String categoryName;
     private float rating;
-    private String imageName;
+    private String imageName; // this one is not needed . To be deleted later
 
     // --------------ManyToOne Relation below
     public void setId(int id) {
@@ -31,8 +31,8 @@ public class Product {
         this.brand = brand;
     }
 
-    public void setCategoryId(int categoryId) {
-        this.categoryId = categoryId;
+    public void setCategoryName(String categoryName) {
+        this.categoryName = categoryName;
     }
 
     public void setRating(float rating) {
@@ -59,8 +59,8 @@ public class Product {
         return brand;
     }
 
-    public int getCategoryId() {
-        return categoryId;
+    public String getCategoryName() {
+        return categoryName;
     }
 
     public float getRating() {
