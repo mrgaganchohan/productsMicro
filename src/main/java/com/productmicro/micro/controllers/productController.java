@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 
 @Controller
 @RequestMapping(path = "/products")
@@ -36,7 +37,7 @@ public class productController {
         Product productSaver = new Product();
 
         productSaver.setName(product.getName());
-        productSaver.setCategoryId(product.getCategoryId());
+        productSaver.setCategoryName(product.getCategoryName());
         productSaver.setProductId(product.getProductId());//product id from same table in Product ID table
         productSaver.setBrand(product.getBrand());
         productSaver.setImageName(product.getImageName()); // may be needed to change later
@@ -46,60 +47,65 @@ public class productController {
         return "works here";
     }
 
+
+
+// Adding a product and it's information . Works Fine.
     @PostMapping(path = "/addImage") //for www-enc- forms , no need to add RequestBody orRequest Param for products
     public @ResponseBody
-    String addImage(Product product, @RequestParam("file") MultipartFile file,
+    //make sure the RequestParam has the same file name as the array of images being passed by the form.
+    //So input file in the form should have the same name.
+    String addImage(Product product, @RequestParam("file") MultipartFile [] file,
                     RedirectAttributes redirectAttributes)  // Removed RequestBody here because it expects json and
     // by removing this I can simply send  www-form-urlencoded codes
     {
         Product productSaver = new Product();
-
+// Return if statement in front end so that if more than 5 images are selected it gives an error
         productSaver.setName(product.getName());
-        productSaver.setCategoryId(product.getCategoryId());
+        productSaver.setCategoryName(product.getCategoryName());
         productSaver.setProductId(product.getProductId());//product id from same table in Product ID table
         productSaver.setBrand(product.getBrand());
         productSaver.setImageName(product.getImageName()); // may be needed to change later
         productSaver.setRating(product.getRating());
         productRepo.save(productSaver);
+        int length = file.length;
+        // loop through all given images.
+        if (length !=0)// only run the following for loop if the length is not 0
+            for (int currentImage = 0; currentImage < length; currentImage++){
+            // Get the format of the image
+                if (file[currentImage].isEmpty()) {
+                    return "File is empty";
+                    // redirectAttributes.addFlashAttribute("message", "Please select a file to upload");
+                    //  return "redirect:uploadStatus";
+                }
+               String[] splitName = file[currentImage].getOriginalFilename().split("\\.");
 
-        // Get the format of the image
-        String[] splitName = file.getOriginalFilename().split("\\.");
         int numberOfSplits = splitName.length;
         String format = splitName[numberOfSplits - 1];
-        if (file.isEmpty()) {
-            return "File is empty";
-            // redirectAttributes.addFlashAttribute("message", "Please select a file to upload");
-            //  return "redirect:uploadStatus";
-        }
+
 
         try {
             File FileToCheckIfExists;
             Path path = null;
             // Get the file and save it somewhere
-            byte[] bytes = file.getBytes();
+            byte[] bytes = file[currentImage].getBytes();
             Log.info("Checkpoint 1------------------------");
             Log.info(product.getProductId());
             Log.info(format);
             //Saving image names as ProductId +1 , ProductId+2 , ... until "ProductId"+"5"
 
+            String [] allowedFormats = {"jpg","png","jpeg","JPG","PNG","JPEG"};
 
-            for (int index = 1; index <= MAX_ALLOWED_IMAGES; index++) { //check if the file exists
-                /*Here checking if image exists in MAX_ALLOWED_IMAGES folder . if there is an image with
-                 * name "last1.jpg" , then "last2.jpg" will be stored , else last3.jpg will be stored,
-                 * else last4 until last5.jpg
-                 * */
-                FileToCheckIfExists = new File(IMAGES + product.getProductId() + index + "." + format);
+                int imageIndex=currentImage+1;
+         //       FileToCheckIfExists = new File(IMAGES + product.getProductId() + imageIndex + "."+format);
 
-                if (!FileToCheckIfExists.exists()) // if the file doesn't exist
-                {
-                    path = Paths.get(IMAGES + product.getProductId() + index + "." + format);
-                    break;
-                }
+                    path = Paths.get(IMAGES + product.getProductId() + imageIndex + "." + format);
+                    Files.write(path, bytes);
 
-            }
+
+
+
             Log.info("Checkpoint 2------------------------");
 
-            Files.write(path, bytes);
             Log.info("Checkpoint 3------------------------");
 
 
@@ -108,7 +114,7 @@ public class productController {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
+    }
 //        return "redirect:/uploadStatus";
         return "works here";
     }
