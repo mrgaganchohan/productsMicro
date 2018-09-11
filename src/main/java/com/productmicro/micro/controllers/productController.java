@@ -20,7 +20,7 @@ import java.util.List;
 
 @Controller
 @RequestMapping(path = "/products")
-public class productController {
+public class productController  {
     private static String user = System.getProperty("user.name");
     private static String IMAGES = "/Users/" + user + "/Documents/images/";
     private static int MAX_ALLOWED_IMAGES = 5;
@@ -128,4 +128,25 @@ public class productController {
 
 
     }
+    @GetMapping(path="/getByCategory")
+
+    public @ResponseBody
+    Iterable<Product>  findByCategoryP()
+    {
+        return productRepo.findByCategory("Electronics");
+
+    }
+
+
+
+
+    @GetMapping(path="/getByRating")
+
+    public @ResponseBody
+    Iterable<Product>  findByRatingP()
+    {
+        return productRepo.findByRating(4.8);
+
+    }
 }
+
