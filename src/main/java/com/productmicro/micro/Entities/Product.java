@@ -11,7 +11,7 @@ public class Product {
     private String name;
     private String brand;
     private String categoryName;
-    private float rating;
+    private double rating;
     private String imageName; // this one is not needed . To be deleted later
 
     // --------------ManyToOne Relation below
@@ -35,7 +35,7 @@ public class Product {
         this.categoryName = categoryName;
     }
 
-    public void setRating(float rating) {
+    public void setRating(double rating) {
         this.rating = rating;
     }
 
@@ -63,7 +63,7 @@ public class Product {
         return categoryName;
     }
 
-    public float getRating() {
+    public double getRating() {
         return rating;
     }
 
