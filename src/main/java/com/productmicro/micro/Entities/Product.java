@@ -7,6 +7,8 @@ public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
+    @Column(unique=true)
+
     private String productId;
     private String name;
     private String brand;

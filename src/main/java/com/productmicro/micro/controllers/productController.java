@@ -17,6 +17,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+@CrossOrigin  //Access-control-allow-origin
 
 @Controller
 @RequestMapping(path = "/products")
@@ -27,6 +28,14 @@ public class productController  {
     @Autowired
     private ProductRepository productRepo;
     private static org.apache.commons.logging.Log Log = LogFactory.getLog(productController.class);
+
+    @GetMapping (path="/displayProducts") // no images
+    public @ResponseBody
+    Iterable<Product> displayProducts()
+    {
+        return productRepo.findAll();
+    }
+    // NOW Display products with Images
 
 
     @PostMapping(path = "/add")
@@ -50,6 +59,7 @@ public class productController  {
 
 
 // Adding a product and it's information . Works Fine.
+
     @PostMapping(path = "/addImage") //for www-enc- forms , no need to add RequestBody orRequest Param for products
     public @ResponseBody
     //make sure the RequestParam has the same file name as the array of images being passed by the form.
@@ -118,35 +128,40 @@ public class productController  {
 //        return "redirect:/uploadStatus";
         return "works here";
     }
+    @GetMapping(path="/delete/{productId}")
+    public @ResponseBody void delProduct(@PathVariable  String productId) {
+        productRepo.deleteByProductId(productId);
 
+    }
     //del By ProductID
-    @PostMapping(path = "/del") // we can delete a product by productId (instead of simple ID) as each product
-    // will have different productID . Easy to retrieve
-    public @ResponseBody
-    void delProduct(@RequestBody Product product) {
-        Product productSaver = new Product();
 
-
-    }
-    @GetMapping(path="/getByCategory")
+    @GetMapping(path="/orderByName")
 
     public @ResponseBody
-    Iterable<Product>  findByCategoryP()
+    Iterable<Product>  sortByName()
     {
-        return productRepo.findByCategory("Electronics");
+        return productRepo.sortByName();
 
     }
-
-
-
-
-    @GetMapping(path="/getByRating")
+    @GetMapping(path="/getByCategory/{category}")
 
     public @ResponseBody
-    Iterable<Product>  findByRatingP()
+    Iterable<Product>  findByCategoryP(@PathVariable String category)
     {
-        return productRepo.findByRating(4.8);
+        return productRepo.findByCategory(category);
 
     }
+
+
+
+
+    @GetMapping(path="/getByRating/{rating}")
+
+    public @ResponseBody
+    Iterable<Product>  findByRatingP(@PathVariable double rating)
+    {
+        return productRepo.findByRating(rating);
+    }
+
 }
 
