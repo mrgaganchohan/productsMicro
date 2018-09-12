@@ -1,6 +1,8 @@
 package com.productmicro.micro.controllers;
 
+import com.productmicro.micro.Entities.ImageUrl;
 import com.productmicro.micro.Entities.Product;
+import com.productmicro.micro.Repositories.ImageUrlRepo;
 import com.productmicro.micro.Repositories.ProductRepository;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +29,8 @@ public class productController  {
     private static int MAX_ALLOWED_IMAGES = 5;
     @Autowired
     private ProductRepository productRepo;
+    @Autowired
+    private ImageUrlRepo imageRepo;
     private static org.apache.commons.logging.Log Log = LogFactory.getLog(productController.class);
 
     @GetMapping (path="/displayProducts") // no images
@@ -36,6 +40,7 @@ public class productController  {
         return productRepo.findAll();
     }
     // NOW Display products with Images
+
 
 
     @PostMapping(path = "/add")
@@ -76,8 +81,10 @@ public class productController  {
         productSaver.setBrand(product.getBrand());
         productSaver.setImageName(product.getImageName()); // may be needed to change later
         productSaver.setRating(product.getRating());
+        Log.info("SAvinf product");
         productRepo.save(productSaver);
         int length = file.length;
+        Log.info(length+"------Length printed");
         // loop through all given images.
         if (length !=0)// only run the following for loop if the length is not 0
             for (int currentImage = 0; currentImage < length; currentImage++){
@@ -94,21 +101,29 @@ public class productController  {
 
 
         try {
+            Log.info("Checkpoint 1------------------------");
+
             File FileToCheckIfExists;
             Path path = null;
             // Get the file and save it somewhere
             byte[] bytes = file[currentImage].getBytes();
-            Log.info("Checkpoint 1------------------------");
             Log.info(product.getProductId());
             Log.info(format);
             //Saving image names as ProductId +1 , ProductId+2 , ... until "ProductId"+"5"
 
             String [] allowedFormats = {"jpg","png","jpeg","JPG","PNG","JPEG"};
-
+            String imageName;
                 int imageIndex=currentImage+1;
          //       FileToCheckIfExists = new File(IMAGES + product.getProductId() + imageIndex + "."+format);
-
+            imageName=product.getProductId() + imageIndex + "."+format;
                     path = Paths.get(IMAGES + product.getProductId() + imageIndex + "." + format);
+
+                    // SAVING Imageurls in ImageURL table , so that we can access images easily by providing the correct ProductId
+            ImageUrl imageUrlSaver = new ImageUrl();
+
+            imageUrlSaver.setImageName(imageName);
+            imageUrlSaver.setProductId(product.getProductId());
+            imageRepo.save(imageUrlSaver);
                     Files.write(path, bytes);
 
 
@@ -131,6 +146,7 @@ public class productController  {
     @GetMapping(path="/delete/{productId}")
     public @ResponseBody void delProduct(@PathVariable  String productId) {
         productRepo.deleteByProductId(productId);
+        imageRepo.deleteByProductId(productId);
 
     }
     //del By ProductID
@@ -153,6 +169,11 @@ public class productController  {
     }
 
 
+    @GetMapping(path="/getImageUrls/{productId}")
+    public @ResponseBody
+    Iterable<ImageUrl> getImageUrls(@PathVariable String productId){
+        return imageRepo.findByProductId(productId);
+    }
 
 
     @GetMapping(path="/getByRating/{rating}")
@@ -164,4 +185,5 @@ public class productController  {
     }
 
 }
+
 

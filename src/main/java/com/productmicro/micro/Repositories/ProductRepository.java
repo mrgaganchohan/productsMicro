@@ -23,6 +23,8 @@ public interface ProductRepository extends CrudRepository<Product, Integer> {
     List<Product> sortByName();
 
 
+
+
     @Transactional //research more
     void deleteByProductId(String productId);
 }
