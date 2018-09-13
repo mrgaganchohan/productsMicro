@@ -6,6 +6,8 @@ import com.productmicro.micro.Repositories.ImageUrlRepo;
 import com.productmicro.micro.Repositories.ProductRepository;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,6 +22,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 @CrossOrigin  //Access-control-allow-origin
+@SuppressWarnings("unchecked")
 
 @Controller
 @RequestMapping(path = "/products")
@@ -34,15 +37,16 @@ public class productController  {
     private static org.apache.commons.logging.Log Log = LogFactory.getLog(productController.class);
 
     @GetMapping (path="/displayProducts") // no images
-    public @ResponseBody
-    Iterable<Product> displayProducts()
+    public ResponseEntity displayProducts()
     {
-        return productRepo.findAll();
+
+        Iterable<Product> allProducts =productRepo.findAll();
+        return  new ResponseEntity(allProducts,HttpStatus.OK);
     }
     // NOW Display products with Images
 
 
-
+    // Won't BE using , to be deleted in future
     @PostMapping(path = "/add")
     public @ResponseBody
     String addProduct(Product product)  // Removed RequestBody here because it expects json and
@@ -64,17 +68,28 @@ public class productController  {
 
 
 // Adding a product and it's information . Works Fine.
-
+// ADD A NEW PRODUCT
     @PostMapping(path = "/addImage") //for www-enc- forms , no need to add RequestBody orRequest Param for products
     public @ResponseBody
     //make sure the RequestParam has the same file name as the array of images being passed by the form.
     //So input file in the form should have the same name.
-    String addImage(Product product, @RequestParam("file") MultipartFile [] file,
-                    RedirectAttributes redirectAttributes)  // Removed RequestBody here because it expects json and
+    ResponseEntity addImage(Product product, @RequestParam("file") MultipartFile [] file,
+                            RedirectAttributes redirectAttributes)  // Removed RequestBody here because it expects json and
     // by removing this I can simply send  www-form-urlencoded codes
     {
         Product productSaver = new Product();
 // Return if statement in front end so that if more than 5 images are selected it gives an error
+        // CHECK IF It already exists , the ProductId
+
+        Product exists = productRepo.findProductByProductId(product.getProductId());
+        String proId= product.getProductId();
+
+        if (exists!=null)
+        {
+            return new ResponseEntity("Product Id ="+proId +" already exists.", HttpStatus.CONFLICT);
+
+        }
+
         productSaver.setName(product.getName());
         productSaver.setCategoryName(product.getCategoryName());
         productSaver.setProductId(product.getProductId());//product id from same table in Product ID table
@@ -90,7 +105,7 @@ public class productController  {
             for (int currentImage = 0; currentImage < length; currentImage++){
             // Get the format of the image
                 if (file[currentImage].isEmpty()) {
-                    return "File is empty";
+                    return  new ResponseEntity(productSaver, HttpStatus.CREATED);
                     // redirectAttributes.addFlashAttribute("message", "Please select a file to upload");
                     //  return "redirect:uploadStatus";
                 }
@@ -141,31 +156,46 @@ public class productController  {
         }
     }
 //        return "redirect:/uploadStatus";
-        return "works here";
+        return  new ResponseEntity(productSaver, HttpStatus.CREATED);
     }
     @GetMapping(path="/delete/{productId}")
-    public @ResponseBody void delProduct(@PathVariable  String productId) {
+    public ResponseEntity delProduct(@PathVariable  String productId) {
+
+        Product exists = productRepo.findProductByProductId(productId);
+        if (exists==null)
+        {
+            return new ResponseEntity("Product Id ="+productId +" doesn't exist", HttpStatus.NOT_FOUND);
+
+        }
         productRepo.deleteByProductId(productId);
         imageRepo.deleteByProductId(productId);
+        return new ResponseEntity("Deleted '" + productId + "' successfully.", HttpStatus.OK);
+
 
     }
     //del By ProductID
 
     @GetMapping(path="/orderByName")
 
-    public @ResponseBody
-    Iterable<Product>  sortByName()
+    public ResponseEntity
+     sortByName()
     {
-        return productRepo.sortByName();
-
+        Iterable <Product> productSort =  productRepo.sortByName();
+        return new ResponseEntity(productSort,HttpStatus.OK);
     }
     @GetMapping(path="/getByCategory/{category}")
 
-    public @ResponseBody
-    Iterable<Product>  findByCategoryP(@PathVariable String category)
+    public ResponseEntity
+      findByCategoryP(@PathVariable String category)
     {
-        return productRepo.findByCategory(category);
+        List <Product> exists = productRepo.findProductByCategoryName(category);
 
+
+        if (exists.isEmpty()){
+            return new ResponseEntity(category+" Category not found",HttpStatus.OK);
+        }
+         Iterable<Product> productsByCat= productRepo.findByCategory(category);
+        return new ResponseEntity(productsByCat,HttpStatus.OK);
     }
 
 
@@ -178,10 +208,11 @@ public class productController  {
 
     @GetMapping(path="/getByRating/{rating}")
 
-    public @ResponseBody
-    Iterable<Product>  findByRatingP(@PathVariable double rating)
+    public ResponseEntity  findByRatingP(@PathVariable double rating)
     {
-        return productRepo.findByRating(rating);
+
+        Iterable<Product> productRat= productRepo.findByRating(rating);
+        return new ResponseEntity(productRat,HttpStatus.OK);
     }
 
 }
