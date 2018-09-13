@@ -1,25 +1,23 @@
 package com.productmicro.micro.Entities;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
 public class ImageUrl {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
-    private String productId;
     private String imageName;
 
     public void setId(int id) {
         this.id = id;
     }
+// THIS HAS FOREIGN KEY which is PRODUCTID
+    @ManyToOne
+    @JoinColumn(name="productId",        referencedColumnName = "productId"
 
-    public void setProductId(String productId) {
-        this.productId = productId;
-    }
+    )
+    private Product product;
 
     public void setImageName(String imageName) {
         this.imageName = imageName;
@@ -29,8 +27,11 @@ public class ImageUrl {
         return id;
     }
 
-    public String getProductId() {
-        return productId;
+    public Product getProduct() {
+        return product;
+    }
+    public void setProduct(Product product) {
+        this.product = product;
     }
 
     public String getImageName() {

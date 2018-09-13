@@ -105,7 +105,8 @@ public class productController  {
             for (int currentImage = 0; currentImage < length; currentImage++){
             // Get the format of the image
                 if (file[currentImage].isEmpty()) {
-                    return  new ResponseEntity(productSaver, HttpStatus.CREATED);
+                    //return  new ResponseEntity(productSaver, HttpStatus.CREATED);
+                    continue;
                     // redirectAttributes.addFlashAttribute("message", "Please select a file to upload");
                     //  return "redirect:uploadStatus";
                 }
@@ -137,7 +138,7 @@ public class productController  {
             ImageUrl imageUrlSaver = new ImageUrl();
 
             imageUrlSaver.setImageName(imageName);
-            imageUrlSaver.setProductId(product.getProductId());
+            imageUrlSaver.setProduct(productSaver);
             imageRepo.save(imageUrlSaver);
                     Files.write(path, bytes);
 
