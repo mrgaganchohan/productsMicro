@@ -21,9 +21,10 @@ public interface ProductRepository extends CrudRepository<Product, Integer> {
     // Sort by name
     @Query("SELECT p from Product p order by p.name asc") //figure out how to replace ?1 with rating
     List<Product> sortByName();
-
-
-
+    //multiple entries
+    List <Product> findProductByCategoryName(String category);
+    //only one will be returned as Products are unique
+    Product findProductByProductId(String productId);
 
     @Transactional //research more
     void deleteByProductId(String productId);
