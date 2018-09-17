@@ -14,8 +14,8 @@ public class ImageUrl {
     }
 // THIS HAS FOREIGN KEY which is PRODUCTID
     @ManyToOne
-    @JoinColumn(name="productId",        referencedColumnName = "productId"
-
+    @JoinColumn(name="productId",
+            referencedColumnName = "productId"
     )
     private Product product;
 
