@@ -10,11 +10,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.boot.configurationprocessor.json.JSONObject;
 
 // The following imports are used for uploading image
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.validation.Valid;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -49,11 +51,27 @@ public class productController  {
     // Won't BE using , to be deleted in future
     @PostMapping(path = "/add")
     public @ResponseBody
-    String addProduct(Product product)  // Removed RequestBody here because it expects json and
+    String addProduct(@Valid @ModelAttribute Product product) { // Removed RequestBody here because it expects json and
     // by removing this I can simply send  www-form-urlencoded codes
-    {
-        Product productSaver = new Product();
+    Product productSaver = new Product();
 
+ /*   {
+        JSONObject jsonObject = null;
+
+try {
+    jsonObject = new JSONObject(form);
+    productSaver.setName(jsonObject.getString("name"));
+    productSaver.setBrand(jsonObject.getString("brand"));
+    productSaver.setProductId(jsonObject.getString("productId"));
+    productSaver.setImageName(jsonObject.getString("imageName"));
+    productSaver.setCategoryName(jsonObject.getString("categoryName"));
+    productSaver.setRating(jsonObject.getDouble("rating"));
+    productRepo.save(productSaver);
+}
+catch (Exception e)
+{
+    e.printStackTrace();
+}*/
         productSaver.setName(product.getName());
         productSaver.setCategoryName(product.getCategoryName());
         productSaver.setProductId(product.getProductId());//product id from same table in Product ID table
