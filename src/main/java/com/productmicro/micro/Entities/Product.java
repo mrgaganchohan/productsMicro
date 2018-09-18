@@ -15,6 +15,34 @@ public class Product {
     private String categoryName;
     private double rating;
     private String imageName; // this one is not needed . To be deleted later
+    private String description;
+    private double price;
+    private double discount ;
+
+    public String getDescription() {
+        return description;
+    }
+
+    public String getPrice() {
+        return price;
+    }
+
+    public double getDiscount() {
+        return discount;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setPrice(String price) {
+        this.price = price;
+    }
+
+    public void setDiscount(double discount) {
+        this.discount = discount;
+    }
+
 
     // --------------ManyToOne Relation below
     public void setId(int id) {

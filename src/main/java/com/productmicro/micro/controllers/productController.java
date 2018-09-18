@@ -114,6 +114,9 @@ catch (Exception e)
         productSaver.setBrand(product.getBrand());
         productSaver.setImageName(product.getImageName()); // may be needed to change later
         productSaver.setRating(product.getRating());
+        productSaver.setDescription(product.getDescription());
+        productSaver.setDiscount(product.getDiscount());
+        productSaver.setPrice(product.getPrice());
         Log.info("SAvinf product");
         productRepo.save(productSaver);
         int length = file.length;
