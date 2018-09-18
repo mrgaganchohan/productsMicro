@@ -23,7 +23,7 @@ public class Product {
         return description;
     }
 
-    public String getPrice() {
+    public double getPrice() {
         return price;
     }
 
@@ -35,7 +35,7 @@ public class Product {
         this.description = description;
     }
 
-    public void setPrice(String price) {
+    public void setPrice(double price) {
         this.price = price;
     }
 
