@@ -45,6 +45,7 @@ public class productController  {
         Iterable<Product> allProducts =productRepo.findAll();
         return  new ResponseEntity(allProducts,HttpStatus.OK);
     }
+
     // NOW Display products with Images
 
 
@@ -235,6 +236,11 @@ catch (Exception e)
 
         Iterable<Product> productRat= productRepo.findByRating(rating);
         return new ResponseEntity(productRat,HttpStatus.OK);
+    }
+    public boolean checkIfProductIdExists()
+    {
+
+        return true;
     }
 
 }
