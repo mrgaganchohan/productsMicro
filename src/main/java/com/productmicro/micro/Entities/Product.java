@@ -1,6 +1,7 @@
 package com.productmicro.micro.Entities;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 @Entity
 public class Product {
@@ -8,15 +9,23 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
     @Column(unique=true)
-
+    @NotNull
     private String productId;
+    @NotNull
     private String name;
+    @NotNull
     private String brand;
+    @NotNull
     private String categoryName;
+    @NotNull
     private double rating;
+    @NotNull
     private String imageName; // this one is not needed . To be deleted later
+    @NotNull
     private String description;
+    @NotNull
     private double price;
+    @NotNull
     private double discount ;
 
     public String getDescription() {
