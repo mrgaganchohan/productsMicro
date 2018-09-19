@@ -52,19 +52,19 @@ public class productController  {
     // Won't BE using , to be deleted in future
     @PostMapping(path = "/add")
     public @ResponseBody
-    ResponseEntity addProduct(@Valid @ModelAttribute Product product) { // Removed RequestBody here because it expects json and
+    ResponseEntity addProduct( Product product) { // Removed RequestBody here because it expects json and
     // by removing this I can simply send  www-form-urlencoded codes
     Product productSaver = new Product();
         Product exists = productRepo.findProductByProductId(product.getProductId());
         String proId= product.getProductId();
 
-        if (exists!=null)
+       if (exists!=null)
         {
             return new ResponseEntity("Product Id ="+proId +" already exists.", HttpStatus.CONFLICT);
 
         }
 
-        if (proId.isEmpty())
+        if (proId.equals(""))
         {
             return new ResponseEntity("Product Id  empty" ,HttpStatus.BAD_REQUEST
             );
@@ -98,7 +98,7 @@ catch (Exception e)
         productSaver.setPrice(product.getPrice());
         Log.info("Works till here");
         productRepo.save(productSaver);
-        return  new ResponseEntity(productSaver, HttpStatus.CREATED);
+        return  new ResponseEntity (productSaver, HttpStatus.CREATED);
     }
 
 
@@ -265,6 +265,7 @@ catch (Exception e)
 
         return true;
     }
+
 
 }
 
