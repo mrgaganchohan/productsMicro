@@ -15,7 +15,7 @@ public class ImageUrl {
 // THIS HAS FOREIGN KEY which is PRODUCTID
     @ManyToOne
     @JoinColumn(name="productId",
-            referencedColumnName = "productId"
+            referencedColumnName = "id"
     )
     private Product product;
 
@@ -36,5 +36,10 @@ public class ImageUrl {
 
     public String getImageName() {
         return imageName;
+    }
+
+    @Override
+    public String toString() {
+        return product.getProductId();
     }
 }

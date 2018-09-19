@@ -91,7 +91,7 @@ catch (Exception e)
         productSaver.setCategoryName(product.getCategoryName());
         productSaver.setProductId(product.getProductId());//product id from same table in Product ID table
         productSaver.setBrand(product.getBrand());
-        productSaver.setImageName(product.getImageName()); // may be needed to change later
+        productSaver.setImageName(product.getImageName()); // maydispl be needed to change later
         productSaver.setRating(product.getRating());
         productSaver.setDiscount(product.getDiscount());
         productSaver.setDescription(product.getDescription());
@@ -198,6 +198,7 @@ catch (Exception e)
 //        return "redirect:/uploadStatus";
         return  new ResponseEntity(productSaver, HttpStatus.CREATED);
     }
+
     @GetMapping(path="/delete/{productId}")
     public ResponseEntity delProduct(@PathVariable  String productId) {
 
@@ -214,12 +215,19 @@ catch (Exception e)
 
     }
     //del By ProductID
-
+    @GetMapping(path="/getImageUrl/{pid}")
+    public ResponseEntity
+    getImageUrl(@PathVariable int pid)
+    {
+        Iterable <ImageUrl> result = imageRepo.findImageUrlsByProductId(pid);
+        return new ResponseEntity(result,HttpStatus.OK);
+    }
     @GetMapping(path="/orderByName")
 
     public ResponseEntity
      sortByName()
     {
+
         Iterable <Product> productSort =  productRepo.sortByName();
         return new ResponseEntity(productSort,HttpStatus.OK);
     }
@@ -239,11 +247,11 @@ catch (Exception e)
     }
 
 
-    @GetMapping(path="/getImageUrls/{productId}")
+    /*@GetMapping(path="/getImageUrls/{productId}")
     public @ResponseBody
     Iterable<ImageUrl> getImageUrls(@PathVariable String productId){
         return imageRepo.findByProductId(productId);
-    }
+    }*/
 
 
     @GetMapping(path="/getByProductId/{productId}")

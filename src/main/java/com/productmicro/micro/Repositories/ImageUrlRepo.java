@@ -1,6 +1,7 @@
 package com.productmicro.micro.Repositories;
 
 import com.productmicro.micro.Entities.ImageUrl;
+import com.productmicro.micro.Entities.Product;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
@@ -14,6 +15,9 @@ public interface ImageUrlRepo extends CrudRepository<ImageUrl, Integer> {
         //research more
     void deleteByProductId(String productId);
 
-    @Query("SELECT  u.imageName from ImageUrl  u where u =?1")
-    List<ImageUrl> findByProductId(String productId);
+ //   @Query("SELECT  u.imageName from ImageUrl  u where u.product =?1")
+    List<ImageUrl> findImageUrlsByProductId(int productId);
+
+   List <ImageUrl> findByProduct(int productID);
+
 }
