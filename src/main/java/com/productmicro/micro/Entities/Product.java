@@ -1,5 +1,7 @@
 package com.productmicro.micro.Entities;
 
+import org.springframework.context.annotation.Primary;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
