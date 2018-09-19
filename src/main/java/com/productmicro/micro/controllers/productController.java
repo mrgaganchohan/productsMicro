@@ -52,10 +52,24 @@ public class productController  {
     // Won't BE using , to be deleted in future
     @PostMapping(path = "/add")
     public @ResponseBody
-    String addProduct(@Valid @ModelAttribute Product product) { // Removed RequestBody here because it expects json and
+    ResponseEntity addProduct(@Valid @ModelAttribute Product product) { // Removed RequestBody here because it expects json and
     // by removing this I can simply send  www-form-urlencoded codes
     Product productSaver = new Product();
+        Product exists = productRepo.findProductByProductId(product.getProductId());
+        String proId= product.getProductId();
 
+        if (exists!=null)
+        {
+            return new ResponseEntity("Product Id ="+proId +" already exists.", HttpStatus.CONFLICT);
+
+        }
+
+        if (proId.isEmpty())
+        {
+            return new ResponseEntity("Product Id  empty" ,HttpStatus.BAD_REQUEST
+            );
+
+        }
  /*   {
         JSONObject jsonObject = null;
 
@@ -79,9 +93,12 @@ catch (Exception e)
         productSaver.setBrand(product.getBrand());
         productSaver.setImageName(product.getImageName()); // may be needed to change later
         productSaver.setRating(product.getRating());
+        productSaver.setDiscount(product.getDiscount());
+        productSaver.setDescription(product.getDescription());
+        productSaver.setPrice(product.getPrice());
         Log.info("Works till here");
         productRepo.save(productSaver);
-        return "works here";
+        return  new ResponseEntity(productSaver, HttpStatus.CREATED);
     }
 
 
@@ -229,6 +246,12 @@ catch (Exception e)
     }
 
 
+    @GetMapping(path="/getByProductId/{productId}")
+    public ResponseEntity getByProductId(@PathVariable String productId)
+    {
+        Product productIdRequired = productRepo.findProductByProductId(productId);
+        return new ResponseEntity(productIdRequired,HttpStatus.OK);
+    }
     @GetMapping(path="/getByRating/{rating}")
 
     public ResponseEntity  findByRatingP(@PathVariable double rating)
