@@ -30,7 +30,8 @@ import java.util.List;
 @RequestMapping(path = "/products")
 public class productController  {
     private static String user = System.getProperty("user.name");
-    private static String IMAGES = "/Users/" + user + "/Documents/images/";
+
+    private static String IMAGES="/opt/imgs/images/";
     private static int MAX_ALLOWED_IMAGES = 5;
     @Autowired
     private ProductRepository productRepo;
@@ -102,7 +103,18 @@ catch (Exception e)
     }
 
 
-
+    private static void checkOS()
+    {
+        String os=System.getProperty("os.name");
+        if (os.equals("Mac OS X"))
+        {
+            IMAGES = "/Users/" + user + "/Documents/images/";
+            Log.info("OSX DETECTED--------");}
+        else{
+            IMAGES = "/opt/imgs/images/";
+            Log.info("Linux Detected---------");
+        }
+    }
 // Adding a product and it's information . Works Fine.
 // ADD A NEW PRODUCT
     @PostMapping(path = "/addImage") //for www-enc- forms , no need to add RequestBody orRequest Param for products
@@ -113,6 +125,7 @@ catch (Exception e)
                             RedirectAttributes redirectAttributes)  // Removed RequestBody here because it expects json and
     // by removing this I can simply send  www-form-urlencoded codes
     {
+       checkOS();
         Product productSaver = new Product();
 // Return if statement in front end so that if more than 5 images are selected it gives an error
         // CHECK IF It already exists , the ProductId
@@ -208,17 +221,21 @@ catch (Exception e)
             return new ResponseEntity("Product Id ="+productId +" doesn't exist", HttpStatus.NOT_FOUND);
 
         }
+        int pid = productRepo.findIdByProductId(productId);
+        imageRepo.deleteImageUrlsByProductId(pid);
+
         productRepo.deleteByProductId(productId);
-        imageRepo.deleteByProductId(productId);
         return new ResponseEntity("Deleted '" + productId + "' successfully.", HttpStatus.OK);
 
 
     }
     //del By ProductID
-    @GetMapping(path="/getImageUrl/{pid}")
+    @GetMapping(path="/getImageUrl/{productId}")
     public ResponseEntity
-    getImageUrl(@PathVariable int pid)
-    {
+    getImageUrl(@PathVariable String productId)
+    {     // pid is the pid column that is the foreign key.
+        int pid = productRepo.findIdByProductId(productId);
+
         Iterable <ImageUrl> result = imageRepo.findImageUrlsByProductId(pid);
         return new ResponseEntity(result,HttpStatus.OK);
     }

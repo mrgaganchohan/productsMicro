@@ -13,10 +13,10 @@ import java.util.List;
 public interface ImageUrlRepo extends CrudRepository<ImageUrl, Integer> {
     @Transactional
         //research more
-    void deleteByProductId(String productId);
+    void deleteImageUrlsByProductId(int productId);
 
  //   @Query("SELECT  u.imageName from ImageUrl  u where u.product =?1")
-    List<ImageUrl> findImageUrlsByProductId(int productId);
+    List<ImageUrl> findImageUrlsByProductId(int productId); //
 
    List <ImageUrl> findByProduct(int productID);
 
