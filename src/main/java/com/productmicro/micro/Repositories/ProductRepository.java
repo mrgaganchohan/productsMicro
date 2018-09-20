@@ -27,8 +27,9 @@ public interface ProductRepository extends CrudRepository<Product, Integer> {
     List <Product> findProductByCategoryName(String category);
     //only one will be returned as Products are unique
     Product findProductByProductId(String productId);
-
-
+    //find id of the product where ProductId is
+    @Query("Select p.id from Product p where p.productId=?1")
+    int  findIdByProductId(String productId);
     @Transactional //research more
     void deleteByProductId(String productId);
 }
