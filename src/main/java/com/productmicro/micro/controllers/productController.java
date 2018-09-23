@@ -235,8 +235,8 @@ catch (Exception e)
     getImageUrl(@PathVariable String productId)
     {     // pid is the pid column that is the foreign key.
         int pid = productRepo.findIdByProductId(productId);
-
-        Iterable <ImageUrl> result = imageRepo.findImageUrlsByProductId(pid);
+        Log.info("WORKS FINE UNTIL THIS POINT");
+        List <ImageUrl> result = imageRepo.findImageUrlsByProductId(pid);
         return new ResponseEntity(result,HttpStatus.OK);
     }
     @GetMapping(path="/orderByName")
