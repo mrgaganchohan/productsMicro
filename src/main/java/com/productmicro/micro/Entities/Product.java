@@ -24,6 +24,7 @@ public class Product {
     @NotNull
     private String imageName; // this one is not needed . To be deleted later
     @NotNull
+    @Column(length = 1000)
     private String description;
     @NotNull
     private double price;
