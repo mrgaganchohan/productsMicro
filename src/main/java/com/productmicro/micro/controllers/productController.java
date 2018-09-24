@@ -10,13 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.boot.configurationprocessor.json.JSONObject;
-
-// The following imports are used for uploading image
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import javax.validation.Valid;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -35,75 +30,47 @@ public class productController  {
     private static String IMAGES="/opt/imgs/images/";
     private static int MAX_ALLOWED_IMAGES = 5;
     @Autowired
-    private ProductRepository productRepo;
+    private    ProductRepository productRepo;
     @Autowired
-    private ImageUrlRepo imageRepo;
+    private   ImageUrlRepo imageRepo;
     private static org.apache.commons.logging.Log Log = LogFactory.getLog(productController.class);
+
 
     @GetMapping (path="/displayProducts") // no images
     public ResponseEntity displayProducts()
     {
-
         Iterable<Product> allProducts =productRepo.findAll();
-        return  new ResponseEntity(allProducts,HttpStatus.OK);
-    }
 
-    // NOW Display products with Images
-
-
-    // Won't BE using , to be deleted in future
-    @PostMapping(path = "/add")
-    public @ResponseBody
-    ResponseEntity addProduct( Product product) { // Removed RequestBody here because it expects json and
-    // by removing this I can simply send  www-form-urlencoded codes
-    Product productSaver = new Product();
-        Product exists = productRepo.findProductByProductId(product.getProductId());
-        String proId= product.getProductId();
-
-       if (exists!=null)
+        if (allProducts==null)
         {
-            return new ResponseEntity("Product Id ="+proId +" already exists.", HttpStatus.CONFLICT);
+            return new ResponseEntity("No Product Exists", HttpStatus.NOT_FOUND);
 
         }
-
-        if (proId.equals(""))
-        {
-            return new ResponseEntity("Product Id  empty" ,HttpStatus.BAD_REQUEST
-            );
-
-        }
- /*   {
-        JSONObject jsonObject = null;
-
-try {
-    jsonObject = new JSONObject(form);
-    productSaver.setName(jsonObject.getString("name"));
-    productSaver.setBrand(jsonObject.getString("brand"));
-    productSaver.setProductId(jsonObject.getString("productId"));
-    productSaver.setImageName(jsonObject.getString("imageName"));
-    productSaver.setCategoryName(jsonObject.getString("categoryName"));
-    productSaver.setRating(jsonObject.getDouble("rating"));
-    productRepo.save(productSaver);
-}
-catch (Exception e)
-{
-    e.printStackTrace();
-}*/
-        productSaver.setName(product.getName());
-        productSaver.setCategoryName(product.getCategoryName());
-        productSaver.setProductId(product.getProductId());//product id from same table in Product ID table
-        productSaver.setBrand(product.getBrand());
-      //  productSaver.setImageNameP(product.getImageNameP()); // maydispl be needed to change later
-        productSaver.setRating(product.getRating());
-        productSaver.setDiscount(product.getDiscount());
-        productSaver.setDescription(product.getDescription());
-        productSaver.setPrice(product.getPrice());
-        Log.info("Works till here");
-        productRepo.save(productSaver);
-        return  new ResponseEntity (productSaver, HttpStatus.CREATED);
+        Log.info("Total number of Products is ----");
+        return  new ResponseEntity(        getArraysOfProducts(allProducts),HttpStatus.OK);
     }
 
 
+
+
+
+    private  ArrayList<testUrl> getArraysOfProducts( Iterable<Product> ListOfProductsInputted)
+    {            ArrayList<testUrl> toBeOutputAllProducts=new ArrayList<testUrl>();
+
+
+        for (Product retreivedProducts: ListOfProductsInputted)
+        {
+            int pid = productRepo.findIdByProductId(retreivedProducts.getProductId());
+
+            List <ImageUrl> result = imageRepo.findImageUrlsByProductId(pid);
+            List<String> store = new ArrayList<String>();
+            for (int i=0; i<result.size(); i++){
+                store.add(result.get(i).getImageName());
+            }
+            toBeOutputAllProducts.add(new testUrl(retreivedProducts,store));
+        }
+        return toBeOutputAllProducts;
+    }
     private static void checkOS()
     {
         String os=System.getProperty("os.name");
@@ -158,10 +125,8 @@ catch (Exception e)
             for (int currentImage = 0; currentImage < length; currentImage++){
             // Get the format of the image
                 if (file[currentImage].isEmpty()) {
-                    //return  new ResponseEntity(productSaver, HttpStatus.CREATED);
                     continue;
-                    // redirectAttributes.addFlashAttribute("message", "Please select a file to upload");
-                    //  return "redirect:uploadStatus";
+
                 }
                String[] splitName = file[currentImage].getOriginalFilename().split("\\.");
 
@@ -209,7 +174,6 @@ catch (Exception e)
             e.printStackTrace();
         }
     }
-//        return "redirect:/uploadStatus";
         return  new ResponseEntity(productSaver, HttpStatus.CREATED);
     }
 
@@ -227,16 +191,13 @@ catch (Exception e)
 
         productRepo.deleteByProductId(productId);
         return new ResponseEntity("Deleted '" + productId + "' successfully.", HttpStatus.OK);
-
-
     }
-
-    @GetMapping(path="/getImageUrl/{productId}")
+    @GetMapping(path="/getByProductId/{productId}")
     public ResponseEntity
-    getImageUrlTest(@PathVariable String productId)
+    getByProductId(@PathVariable String productId)
     {     // pid is the pid column that is the foreign key.
-        Product exists = productRepo.findProductByProductId(productId);
-        if (exists==null)
+        Product reqProduct = productRepo.findProductByProductId(productId);
+        if (reqProduct==null)
 
         {
             return new ResponseEntity("Product Id ="+productId +" doesn't exist", HttpStatus.NOT_FOUND);
@@ -250,13 +211,13 @@ catch (Exception e)
         for (int i=0; i<result.size(); i++){
             store.add(result.get(i).getImageName());
         }
-        testUrl temp = new testUrl(exists,store);
+        testUrl temp = new testUrl(reqProduct,store);
 
         //Log.info("WORKS FINE UNTIL THIS POINT");
         return new ResponseEntity(temp,HttpStatus.OK);
     }
     //del By ProductID
-    @GetMapping(path="/getImageUrlTest/{productId}")
+    @GetMapping(path="/getImageUrl/{productId}")
     public ResponseEntity
     getImageUrl(@PathVariable String productId)
     {     // pid is the pid column that is the foreign key.
@@ -279,52 +240,47 @@ catch (Exception e)
     {
 
         Iterable <Product> productSort =  productRepo.sortByName();
-        return new ResponseEntity(productSort,HttpStatus.OK);
+
+        if (productSort==null)
+        {
+            return new ResponseEntity("No Product Exists", HttpStatus.NOT_FOUND);
+
+        }
+        Log.info("Total number of Products is ----");
+        return  new ResponseEntity(        getArraysOfProducts(productSort),HttpStatus.OK);
     }
+
     @GetMapping(path="/getByCategory/{category}")
 
     public ResponseEntity
       findByCategoryP(@PathVariable String category)
     {
-        List <Product> exists = productRepo.findProductByCategoryName(category);
 
+        List <Product> allProducts = productRepo.findProductByCategoryName(category);
 
-        if (exists.isEmpty()){
-            return new ResponseEntity(category+" Category not found",HttpStatus.OK);
+        if (allProducts==null)
+        {
+            return new ResponseEntity("No Product Exists", HttpStatus.NOT_FOUND);
+
         }
-         Iterable<Product> productsByCat= productRepo.findByCategory(category);
-        return new ResponseEntity(productsByCat,HttpStatus.OK);
+        Log.info("Total number of Products is ----");
+        return  new ResponseEntity(        getArraysOfProducts(allProducts),HttpStatus.OK);
     }
 
-
-    /*@GetMapping(path="/getImageUrls/{productId}")
-    public @ResponseBody
-    Iterable<ImageUrl> getImageUrls(@PathVariable String productId){
-        return imageRepo.findByProductId(productId);
-    }*/
-
-
-    @GetMapping(path="/getByProductId/{productId}")
-    public ResponseEntity getByProductId(@PathVariable String productId)
-    {
-        Product productIdRequired = productRepo.findProductByProductId(productId);
-        return new ResponseEntity(productIdRequired,HttpStatus.OK);
-    }
     @GetMapping(path="/getByRating/{rating}")
 
     public ResponseEntity  findByRatingP(@PathVariable double rating)
     {
+        Iterable<Product> allProducts= productRepo.findByRating(rating);
 
-        Iterable<Product> productRat= productRepo.findByRating(rating);
-        return new ResponseEntity(productRat,HttpStatus.OK);
+        if (allProducts==null)
+        {
+            return new ResponseEntity("No Product Exists", HttpStatus.NOT_FOUND);
+
+        }
+        Log.info("Total number of Products is ----");
+        return  new ResponseEntity(getArraysOfProducts(allProducts),HttpStatus.OK);
     }
-    public boolean checkIfProductIdExists()
-    {
-
-        return true;
-    }
-
-
 }
 
 
