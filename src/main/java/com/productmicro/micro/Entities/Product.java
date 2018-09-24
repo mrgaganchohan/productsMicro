@@ -21,8 +21,7 @@ public class Product {
     private String categoryName;
     @NotNull
     private double rating;
-    @NotNull
-    private String imageName; // this one is not needed . To be deleted later
+
     @NotNull
     @Column(length = 1000)
     private String description;
@@ -81,10 +80,6 @@ public class Product {
         this.rating = rating;
     }
 
-    public void setImageName(String imageName) {
-        this.imageName = imageName;
-    }
-
     public int getId() {
         return id;
     }
@@ -109,9 +104,7 @@ public class Product {
         return rating;
     }
 
-    public String getImageName() {
-        return imageName;
-    }//
+
 
 }
 

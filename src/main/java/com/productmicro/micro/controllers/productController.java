@@ -92,7 +92,7 @@ catch (Exception e)
         productSaver.setCategoryName(product.getCategoryName());
         productSaver.setProductId(product.getProductId());//product id from same table in Product ID table
         productSaver.setBrand(product.getBrand());
-        productSaver.setImageName(product.getImageName()); // maydispl be needed to change later
+      //  productSaver.setImageNameP(product.getImageNameP()); // maydispl be needed to change later
         productSaver.setRating(product.getRating());
         productSaver.setDiscount(product.getDiscount());
         productSaver.setDescription(product.getDescription());
@@ -143,7 +143,7 @@ catch (Exception e)
         productSaver.setCategoryName(product.getCategoryName());
         productSaver.setProductId(product.getProductId());//product id from same table in Product ID table
         productSaver.setBrand(product.getBrand());
-        productSaver.setImageName(product.getImageName()); // may be needed to change later
+       // productSaver.setImageNameP(product.getImageNameP()); // may be needed to change later
         productSaver.setRating(product.getRating());
         productSaver.setDescription(product.getDescription());
         productSaver.setDiscount(product.getDiscount());
