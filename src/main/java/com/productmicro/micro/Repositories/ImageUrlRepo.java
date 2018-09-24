@@ -19,8 +19,8 @@ public interface ImageUrlRepo extends CrudRepository<ImageUrl, Integer> {
     //List<ImageUrl> findImageUrlsByProductId(int productId); //
 
     //@Query("SELECT u.imageName from ImageUrl u where u.product=?1")
-    List <ImageUrl> findImageUrlsByProductId(int productId);
+    List <ImageUrl> findImageUrlsByProductId(int pid);
 
-   List <ImageUrl> findByProduct(int productID);
+ ///  List <ImageUrl> findByProduct(int pid);
 
 }
