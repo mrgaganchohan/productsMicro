@@ -189,7 +189,7 @@ catch (Exception e)
                     // SAVING Imageurls in ImageURL table , so that we can access images easily by providing the correct ProductId
             ImageUrl imageUrlSaver = new ImageUrl();
 
-            imageUrlSaver.setImageName(imageUrl);
+            imageUrlSaver.setImageName(imageUrl); // Saving the url
             imageUrlSaver.setProduct(productSaver);
             imageRepo.save(imageUrlSaver);
                     Files.write(path, bytes);
@@ -234,6 +234,13 @@ catch (Exception e)
     public ResponseEntity
     getImageUrl(@PathVariable String productId)
     {     // pid is the pid column that is the foreign key.
+        Product exists = productRepo.findProductByProductId(productId);
+        if (exists==null)
+
+        {
+            return new ResponseEntity("Product Id ="+productId +" doesn't exist", HttpStatus.NOT_FOUND);
+
+        }
         int pid = productRepo.findIdByProductId(productId);
         Log.info("WORKS FINE UNTIL THIS POINT");
         List <ImageUrl> result = imageRepo.findImageUrlsByProductId(pid);
