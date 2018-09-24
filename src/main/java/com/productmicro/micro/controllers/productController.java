@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 @CrossOrigin  //Access-control-allow-origin
 @SuppressWarnings("unchecked")
@@ -229,8 +230,33 @@ catch (Exception e)
 
 
     }
-    //del By ProductID
+
     @GetMapping(path="/getImageUrl/{productId}")
+    public ResponseEntity
+    getImageUrlTest(@PathVariable String productId)
+    {     // pid is the pid column that is the foreign key.
+        Product exists = productRepo.findProductByProductId(productId);
+        if (exists==null)
+
+        {
+            return new ResponseEntity("Product Id ="+productId +" doesn't exist", HttpStatus.NOT_FOUND);
+
+        }
+          int pid = productRepo.findIdByProductId(productId);
+
+
+        List <ImageUrl> result = imageRepo.findImageUrlsByProductId(pid);
+        List<String> store = new ArrayList<String>();
+        for (int i=0; i<result.size(); i++){
+            store.add(result.get(i).getImageName());
+        }
+        testUrl temp = new testUrl(exists,store);
+
+        //Log.info("WORKS FINE UNTIL THIS POINT");
+        return new ResponseEntity(temp,HttpStatus.OK);
+    }
+    //del By ProductID
+    @GetMapping(path="/getImageUrlTest/{productId}")
     public ResponseEntity
     getImageUrl(@PathVariable String productId)
     {     // pid is the pid column that is the foreign key.
