@@ -180,16 +180,16 @@ catch (Exception e)
             //Saving image names as ProductId +1 , ProductId+2 , ... until "ProductId"+"5"
 
             String [] allowedFormats = {"jpg","png","jpeg","JPG","PNG","JPEG"};
-            String imageName;
+            String imageUrl = "https://elixir.ausgrads.academy/images/";
                 int imageIndex=currentImage+1;
          //       FileToCheckIfExists = new File(IMAGES + product.getProductId() + imageIndex + "."+format);
-            imageName=product.getProductId() + imageIndex + "."+format;
+            imageUrl=imageUrl+product.getProductId() + imageIndex + "."+format;
                     path = Paths.get(IMAGES + product.getProductId() + imageIndex + "." + format);
 
                     // SAVING Imageurls in ImageURL table , so that we can access images easily by providing the correct ProductId
             ImageUrl imageUrlSaver = new ImageUrl();
 
-            imageUrlSaver.setImageName(imageName);
+            imageUrlSaver.setImageName(imageUrl);
             imageUrlSaver.setProduct(productSaver);
             imageRepo.save(imageUrlSaver);
                     Files.write(path, bytes);
