@@ -8,15 +8,15 @@ import java.util.List;
 
 public class testUrl{
     Product product;
-    List<String> list ;
-    public testUrl(Product product, List<String> list){
+    List<String> imageUrls;
+    public testUrl(Product product, List<String> imageUrls){
         this.product = product;
-        this.list = list;
+        this.imageUrls = imageUrls;
     }
     public Product getProduct(){
         return product;
     }
     public List<String> getList(){
-        return list;
+        return imageUrls;
     }
 }
