@@ -1,12 +1,15 @@
 package com.productmicro.micro.controllers;
 
+import com.google.gson.Gson;
 import com.productmicro.micro.Entities.ImageUrl;
 import com.productmicro.micro.Entities.Product;
 import com.productmicro.micro.Repositories.ImageUrlRepo;
 import com.productmicro.micro.Repositories.ProductRepository;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -60,9 +63,12 @@ public class productController  {
 
         for (Product retreivedProducts: ListOfProductsInputted)
         {
-            int pid = productRepo.findIdByProductId(retreivedProducts.getProductId());
+          //  int pid = productRepo.findIdByProductId(produsctId);
 
-            List <ImageUrl> result = imageRepo.findImageUrlsByProductId(pid);
+            int id = retreivedProducts.getId();
+
+            List <ImageUrl> result = imageRepo.findImageUrlsByProductId(id);
+
             List<String> store = new ArrayList<String>();
             for (int i=0; i<result.size(); i++){
                 store.add(result.get(i).getImageName());
@@ -98,7 +104,7 @@ public class productController  {
 // Return if statement in front end so that if more than 5 images are selected it gives an error
         // CHECK IF It already exists , the ProductId
 
-        Product exists = productRepo.findProductByProductId(product.getProductId());
+        Product exists = productRepo.findProductById(product.getId());
         String proId= product.getProductId();
 
         if (exists!=null)
@@ -108,7 +114,8 @@ public class productController  {
         }
 
         productSaver.setName(product.getName());
-        productSaver.setCategoryName(product.getCategoryName());
+        productSaver.setSubCategoryId(product.getSubCategoryId());
+        productSaver.setStatus(product.getStatus());
         productSaver.setProductId(product.getProductId());//product id from same table in Product ID table
         productSaver.setBrand(product.getBrand());
        // productSaver.setImageNameP(product.getImageNameP()); // may be needed to change later
@@ -177,36 +184,34 @@ public class productController  {
         return  new ResponseEntity(productSaver, HttpStatus.CREATED);
     }
 
-    @GetMapping(path="/delete/{productId}")
-    public ResponseEntity delProduct(@PathVariable  String productId) {
+    @GetMapping(path="/delete/{id}")
+    public ResponseEntity delProduct(@PathVariable  int id) {
 
-        Product exists = productRepo.findProductByProductId(productId);
+        Product exists = productRepo.findProductById(id);
         if (exists==null)
         {
-            return new ResponseEntity("Product Id ="+productId +" doesn't exist", HttpStatus.NOT_FOUND);
+            return new ResponseEntity("Product  doesn't exist", HttpStatus.NOT_FOUND);
 
         }
-        int pid = productRepo.findIdByProductId(productId);
-        imageRepo.deleteImageUrlsByProductId(pid);
+        imageRepo.deleteImageUrlsById(id);
 
-        productRepo.deleteByProductId(productId);
-        return new ResponseEntity("Deleted '" + productId + "' successfully.", HttpStatus.OK);
+        productRepo.deleteById(id);
+        return new ResponseEntity("Deleted  successfully.", HttpStatus.OK);
     }
-    @GetMapping(path="/getByProductId/{productId}")
+    @GetMapping(path="/getByProductId/{id}")  // gets the product id that is the primary key of that
     public ResponseEntity
-    getByProductId(@PathVariable String productId)
+    getByProductId(@PathVariable int id)
     {     // pid is the pid column that is the foreign key.
-        Product reqProduct = productRepo.findProductByProductId(productId);
+        Product reqProduct = productRepo.findProductById(id);
         if (reqProduct==null)
 
         {
-            return new ResponseEntity("Product Id ="+productId +" doesn't exist", HttpStatus.NOT_FOUND);
+            return new ResponseEntity("Product   doesn't exist", HttpStatus.NOT_FOUND);
 
         }
-          int pid = productRepo.findIdByProductId(productId);
 
 
-        List <ImageUrl> result = imageRepo.findImageUrlsByProductId(pid);
+        List <ImageUrl> result = imageRepo.findImageUrlsByProductId(id);
         List<String> store = new ArrayList<String>();
         for (int i=0; i<result.size(); i++){
             store.add(result.get(i).getImageName());
@@ -216,23 +221,23 @@ public class productController  {
         //Log.info("WORKS FINE UNTIL THIS POINT");
         return new ResponseEntity(temp,HttpStatus.OK);
     }
-    //del By ProductID
-    @GetMapping(path="/getImageUrl/{productId}")
+   /* //del By ProductID //deprecated
+    @GetMapping(path="/getImageUrl/{produdctId}")
     public ResponseEntity
-    getImageUrl(@PathVariable String productId)
+    getImageUrl(@PathVariable String prodsuctId)
     {     // pid is the pid column that is the foreign key.
-        Product exists = productRepo.findProductByProductId(productId);
+        Product exists = productRepo.findProductByProductId(prosductId);
         if (exists==null)
 
         {
-            return new ResponseEntity("Product Id ="+productId +" doesn't exist", HttpStatus.NOT_FOUND);
+            return new ResponseEntity("Product Id ="+produsctId +" doesn't exist", HttpStatus.NOT_FOUND);
 
         }
-        int pid = productRepo.findIdByProductId(productId);
+        int pid = productRepo.findIdByProductId(produsctId);
         Log.info("WORKS FINE UNTIL THIS POINT");
         List <ImageUrl> result = imageRepo.findImageUrlsByProductId(pid);
         return new ResponseEntity(result,HttpStatus.OK);
-    }
+    }*/
     @GetMapping(path="/orderByName")
 
     public ResponseEntity
@@ -250,9 +255,40 @@ public class productController  {
         return  new ResponseEntity(        getArraysOfProducts(productSort),HttpStatus.OK);
     }
 
-    @GetMapping(path="/getByCategory/{category}")
-
+    @PostMapping(path="/getBySubCategory"
+    )
     public ResponseEntity
+    findBySubCategory(@RequestBody  List<Integer> allSub)
+    {
+    ArrayList <Product> allReqProducts = new ArrayList<>();
+        try{
+            for (int list:allSub)
+            {
+                Iterable<Product> categoryProducts=productRepo.findProductBySubCategoryId(list);
+                for (Product currentProduct : categoryProducts)
+                {
+                    allReqProducts.add(currentProduct);
+                }
+
+                Log.info(list);
+            }
+
+            return new ResponseEntity(allReqProducts,HttpStatus.OK);
+
+        }
+    catch(Exception e )
+    {
+    e.printStackTrace();
+    return new ResponseEntity("Something went wrong",HttpStatus.NOT_FOUND);
+    }
+
+    }
+
+
+
+//    @GetMapping(path="/getByCategory/{category}")
+
+  /*  public ResponseEntity
       findByCategoryP(@PathVariable String category)
     {
 
@@ -265,7 +301,7 @@ public class productController  {
         }
         Log.info("Total number of Products is ----");
         return  new ResponseEntity(        getArraysOfProducts(allProducts),HttpStatus.OK);
-    }
+    }*/
 
     @GetMapping(path="/getByRating/{rating}")
 

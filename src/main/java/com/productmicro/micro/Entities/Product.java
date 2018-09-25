@@ -8,7 +8,9 @@ import javax.validation.constraints.NotNull;
 @Entity
 public class Product {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @TableGenerator(name="product", initialValue = 1)
+
+    @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "product")
     private int id;
     @Column(unique=true)
     @NotNull
@@ -18,12 +20,22 @@ public class Product {
     @NotNull
     private String brand;
     @NotNull
-    private String categoryName;
+    private int subCategoryId;
     @NotNull
     private double rating;
 
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
     @NotNull
-    @Column(length = 1000)
+    private String status;
+    @NotNull
+    @Column(length = 2500)
     private String description;
     @NotNull
     private double price;
@@ -72,8 +84,8 @@ public class Product {
         this.brand = brand;
     }
 
-    public void setCategoryName(String categoryName) {
-        this.categoryName = categoryName;
+    public void setSubCategoryId(int subCategoryId) {
+        this.subCategoryId = subCategoryId;
     }
 
     public void setRating(double rating) {
@@ -96,8 +108,8 @@ public class Product {
         return brand;
     }
 
-    public String getCategoryName() {
-        return categoryName;
+    public int getSubCategoryId() {
+        return subCategoryId;
     }
 
     public double getRating() {
