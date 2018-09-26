@@ -91,6 +91,26 @@ public class productController  {
     }
 // Adding a product and it's information . Works Fine.
 // ADD A NEW PRODUCT
+  /*  @PostMapping(path="/add")
+    public @ResponseBody
+    ResponseEntity add(Product product)
+    {
+        Product productSaver = new Product();
+
+        productSaver.setName(product.getName());
+        productSaver.setSubCategoryId(product.getSubCategoryId());
+        productSaver.setStatus(product.getStatus());
+        productSaver.setProductId(product.getProductId());//product id from same table in Product ID table
+        productSaver.setBrand(product.getBrand());
+        // productSaver.setImageNameP(product.getImageNameP()); // may be needed to change later
+        productSaver.setRating(product.getRating());
+        productSaver.setDescription(product.getDescription());
+        productSaver.setDiscount(product.getDiscount());
+        productSaver.setPrice(product.getPrice());
+        Log.info("SAvinf product");
+        productRepo.save(productSaver);
+        return new ResponseEntity(productSaver,HttpStatus.OK);
+    }*/
     @PostMapping(path = "/addImage") //for www-enc- forms , no need to add RequestBody orRequest Param for products
     public @ResponseBody
     //make sure the RequestParam has the same file name as the array of images being passed by the form.
@@ -273,7 +293,7 @@ public class productController  {
                 Log.info(list);
             }
 
-            return new ResponseEntity(allReqProducts,HttpStatus.OK);
+            return new ResponseEntity(getArraysOfProducts(allReqProducts),HttpStatus.OK);
 
         }
     catch(Exception e )
