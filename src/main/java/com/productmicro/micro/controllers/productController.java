@@ -91,9 +91,8 @@ public class productController  {
     }
 // Adding a product and it's information . Works Fine.
 // ADD A NEW PRODUCT
-  /*  @PostMapping(path="/add")
-    public @ResponseBody
-    ResponseEntity add(Product product)
+    @PostMapping(path="/add")
+    public  ResponseEntity add(@RequestBody Product product)
     {
         Product productSaver = new Product();
 
@@ -109,13 +108,14 @@ public class productController  {
         productSaver.setPrice(product.getPrice());
         Log.info("SAvinf product");
         productRepo.save(productSaver);
+        Log.info("Product Saved");
         return new ResponseEntity(productSaver,HttpStatus.OK);
-    }*/
+    }
     @PostMapping(path = "/addImage") //for www-enc- forms , no need to add RequestBody orRequest Param for products
-    public @ResponseBody
+    public
     //make sure the RequestParam has the same file name as the array of images being passed by the form.
     //So input file in the form should have the same name.
-    ResponseEntity addImage(Product product, @RequestParam("file") MultipartFile [] file,
+    ResponseEntity addImage( @RequestBody Product product, @RequestParam("file") MultipartFile [] file,
                             RedirectAttributes redirectAttributes)  // Removed RequestBody here because it expects json and
     // by removing this I can simply send  www-form-urlencoded codes
     {
@@ -275,10 +275,8 @@ public class productController  {
         return  new ResponseEntity(        getArraysOfProducts(productSort),HttpStatus.OK);
     }
 
-    @PostMapping(path="/getBySubCategory"
-    )
-    public ResponseEntity
-    findBySubCategory(@RequestBody  List<Integer> allSub)
+    @PostMapping(path="/getBySubCategory")
+    public ResponseEntity findBySubCategory(@RequestBody  List<Integer> allSub)
     {
     ArrayList <Product> allReqProducts = new ArrayList<>();
         try{

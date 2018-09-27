@@ -14,16 +14,24 @@ public class Product {
     private int id;
     @Column(unique=true)
     @NotNull
-    private String productId;
+    private String productId; //1
     @NotNull
-    private String name;
+    private String name;  //2
     @NotNull
-    private String brand;
+    private String brand;  //3
     @NotNull
-    private int subCategoryId;
+    private int subCategoryId;  //4
     @NotNull
-    private double rating;
-
+    private double rating;  //5
+    @NotNull
+    private String status;  //6
+    @NotNull
+    @Column(length = 2500)
+    private String description; //7
+    @NotNull
+    private double price; //8
+    @NotNull
+    private double discount ;  //9
     public String getStatus() {
         return status;
     }
@@ -32,15 +40,7 @@ public class Product {
         this.status = status;
     }
 
-    @NotNull
-    private String status;
-    @NotNull
-    @Column(length = 2500)
-    private String description;
-    @NotNull
-    private double price;
-    @NotNull
-    private double discount ;
+
 
     public String getDescription() {
         return description;
