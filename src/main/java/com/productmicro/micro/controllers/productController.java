@@ -39,6 +39,13 @@ public class productController  {
     private static org.apache.commons.logging.Log Log = LogFactory.getLog(productController.class);
 
 
+    @GetMapping(path="/searchProducts/{name}")
+    public ResponseEntity searchProducts(@PathVariable String name){
+
+        Iterable<Product> searchedProducts= productRepo.findByName(name);
+        return  new ResponseEntity(  searchedProducts,HttpStatus.OK);
+
+    }
     @GetMapping (path="/displayProducts") // no images
     public ResponseEntity displayProducts()
     {
@@ -335,6 +342,102 @@ public class productController  {
         Log.info("Total number of Products is ----");
         return  new ResponseEntity(getArraysOfProducts(allProducts),HttpStatus.OK);
     }
+
+    @PostMapping(path = "/addImageExp") //for www-enc- forms , no need to add RequestBody orRequest Param for products
+    public
+        //make sure the RequestParam has the same file name as the array of images being passed by the form.
+        //So input file in the form should have the same name.
+   @ResponseBody ResponseEntity addImageExp(  Product product, @RequestParam("file") MultipartFile [] file,
+                             RedirectAttributes redirectAttributes)  // Removed RequestBody here because it expects json and
+    // by removing this I can simply send  www-form-urlencoded codes
+    {
+        checkOS();
+        Product productSaver = new Product();
+// Return if statement in front end so that if more than 5 images are selected it gives an error
+        // CHECK IF It already exists , the ProductId
+
+        Product exists = productRepo.findProductById(product.getId());
+        String proId= product.getProductId();
+
+        if (exists!=null)
+        {
+            return new ResponseEntity("Product Id ="+proId +" already exists.", HttpStatus.CONFLICT);
+
+        }
+
+        productSaver.setName(product.getName());
+        productSaver.setSubCategoryId(product.getSubCategoryId());
+        productSaver.setStatus(product.getStatus());
+        productSaver.setProductId(product.getProductId());//product id from same table in Product ID table
+        productSaver.setBrand(product.getBrand());
+        // productSaver.setImageNameP(product.getImageNameP()); // may be needed to change later
+        productSaver.setRating(product.getRating());
+        productSaver.setDescription(product.getDescription());
+        productSaver.setDiscount(product.getDiscount());
+        productSaver.setPrice(product.getPrice());
+        Log.info("SAvinf product");
+        productRepo.save(productSaver);
+        int length = file.length;
+        Log.info(length+"------Length printed");
+        // loop through all given images.
+        if (length !=0)// only run the following for loop if the length is not 0
+            for (int currentImage = 0; currentImage < length; currentImage++){
+                // Get the format of the image
+                if (file[currentImage].isEmpty()) {
+                    continue;
+
+                }
+                String[] splitName = file[currentImage].getOriginalFilename().split("\\.");
+
+                int numberOfSplits = splitName.length;
+                String format = splitName[numberOfSplits - 1];
+
+
+                try {
+                    Log.info("Checkpoint 1------------------------");
+
+                    File FileToCheckIfExists;
+                    Path path = null;
+                    // Get the file and save it somewhere
+                    byte[] bytes = file[currentImage].getBytes();
+                    Log.info(product.getProductId());
+                    Log.info(format);
+                    //Saving image names as ProductId +1 , ProductId+2 , ... until "ProductId"+"5"
+
+                    String [] allowedFormats = {"jpg","png","jpeg","JPG","PNG","JPEG"};
+                    String imageUrl = "https://elixir.ausgrads.academy/images/";
+                    int imageIndex=currentImage+1;
+                    //       FileToCheckIfExists = new File(IMAGES + product.getProductId() + imageIndex + "."+format);
+                    imageUrl=imageUrl+product.getProductId() + imageIndex + "."+format;
+                    path = Paths.get(IMAGES + product.getProductId() + imageIndex + "." + format);
+
+                    // SAVING Imageurls in ImageURL table , so that we can access images easily by providing the correct ProductId
+                    ImageUrl imageUrlSaver = new ImageUrl();
+
+                    imageUrlSaver.setImageName(imageUrl); // Saving the url
+                    imageUrlSaver.setProduct(productSaver);
+                    imageRepo.save(imageUrlSaver);
+                    Files.write(path, bytes);
+
+
+
+
+                    Log.info("Checkpoint 2------------------------");
+
+                    Log.info("Checkpoint 3------------------------");
+
+
+                    redirectAttributes.addFlashAttribute("message",
+                            "You successfully uploaded");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        return  new ResponseEntity(productSaver, HttpStatus.CREATED);
+    }
+
+
+
 }
 
 

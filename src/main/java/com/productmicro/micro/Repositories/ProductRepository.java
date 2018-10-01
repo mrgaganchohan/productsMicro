@@ -20,6 +20,9 @@ public interface ProductRepository extends CrudRepository<Product, Integer> {
     List<Product> findByRating(double rating);
 
     // Sort by name
+    @Query("SELECT p FROM Product p WHERE p.name LIKE %?1%")
+    List<Product> findByName(String name);
+
     @Query("SELECT p from Product p order by p.name asc") //figure out how to replace ?1 with rating
     List<Product> sortByName();
 
