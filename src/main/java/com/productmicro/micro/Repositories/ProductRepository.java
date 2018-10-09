@@ -28,7 +28,7 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
     @Query("SELECT p from Product p order by p.name asc") //figure out how to replace ?1 with rating
     List<Product> sortByName();
 
-    @Query("SELECT p from Product p ") //figure out how to replace ?1 with rating
+//    @Query("SELECT p from Product p ") //figure out how to replace ?1 with rating
 
 //    Page<Product> all(Pageable Page);
     //multiple entries
