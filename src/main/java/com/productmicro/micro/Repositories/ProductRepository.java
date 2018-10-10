@@ -28,12 +28,21 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
     @Query("SELECT p from Product p order by p.name asc") //figure out how to replace ?1 with rating
     List<Product> sortByName();
 
+
+
 //    @Query("SELECT p from Product p ") //figure out how to replace ?1 with rating
 
 //    Page<Product> all(Pageable Page);
     //multiple entries
     List <Product> findProductBySubCategoryId(int subCategoryId);
     //only one will be returned as Products are unique
+    //Sorted
+    @Query ("SELECT p from Product p where p.subCategoryId in ?1 order by p.name" )
+    List<Product> findSubCategoryIdNameSorted(List<Integer> allSub );
+
+
+    @Query("SELECT p from Product p where p.subCategoryId in ?1 order by p.price")
+    List<Product> findSubCategoryIdPriceSorted(List<Integer> allSub);
     Product findProductById(int productId);
     Product findProductByProductId(String productId);
     //find id of the product where ProductId is
