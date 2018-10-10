@@ -23,7 +23,10 @@
     import java.nio.file.Path;
     import java.nio.file.Paths;
     import java.util.ArrayList;
+    import java.util.Collections;
     import java.util.List;
+    import java.util.Random;
+
     @CrossOrigin  //Access-control-allow-origin
     @SuppressWarnings("unchecked")
 
@@ -65,6 +68,7 @@
         }
 
         // give all products in batches
+
         @GetMapping(path="/BatchDisplayProducts")
         public ResponseEntity batchDisplayProducts()
 
@@ -282,6 +286,10 @@
             List <ImageUrl> result = imageRepo.findImageUrlsByProductId(pid);
             return new ResponseEntity(result,HttpStatus.OK);
         }*/
+
+
+
+
         @GetMapping(path="/orderByName")
 
         public ResponseEntity
@@ -297,6 +305,41 @@
             }
             Log.info("Total number of Products is ----");
             return  new ResponseEntity(        getArraysOfProducts(productSort),HttpStatus.OK);
+        }
+
+        @PostMapping(path="/SortBySubCategoryAndName")
+        public ResponseEntity SortBySubCategoryAndName(@RequestBody  List<Integer> allSub )
+        {
+//            ArrayList <Product> allReqProducts = new ArrayList<>();
+            try{
+                Iterable<Product> categoryProducts=productRepo.findSubCategoryIdNameSorted(allSub);
+//
+
+                return new ResponseEntity(getArraysOfProducts(categoryProducts),HttpStatus.OK);
+
+            }
+            catch(Exception e )
+            {
+                e.printStackTrace();
+                return new ResponseEntity("Something went wrong",HttpStatus.NOT_FOUND);
+            }
+        }
+        @PostMapping(path="/SortBySubCategoryAndPrice")
+        public ResponseEntity SortBySubCategoryAndPrice(@RequestBody List<Integer> allSub)
+        {
+            try{
+                Iterable<Product> categoryProducts=productRepo.findSubCategoryIdPriceSorted(allSub);
+//
+
+                return new ResponseEntity(getArraysOfProducts(categoryProducts),HttpStatus.OK);
+
+            }
+            catch(Exception e )
+            {
+                e.printStackTrace();
+                return new ResponseEntity("Something went wrong",HttpStatus.NOT_FOUND);
+            }
+
         }
 
         @PostMapping(path="/getBySubCategory")
@@ -323,6 +366,9 @@
         e.printStackTrace();
         return new ResponseEntity("Something went wrong",HttpStatus.NOT_FOUND);
         }
+
+
+
 
         }
 
@@ -359,6 +405,73 @@
             Log.info("Total number of Products is ----");
             return  new ResponseEntity(getArraysOfProducts(allProducts),HttpStatus.OK);
         }
+
+        @PostMapping(path="/justImage")
+            public @ResponseBody ResponseEntity justImage(@RequestParam("file") MultipartFile[] file)
+        {
+            checkOS();
+            int length = file.length;
+            Log.info(length+"------Length printed");
+            // loop through all given images.
+            Random r = new Random();
+            int Low = 10;
+            int High = 1000;
+            int Result = r.nextInt(High-Low) + Low;
+            Log.info("Value of Result is"+ Result);
+            if (length !=0)// only run the following for loop if the length is not 0
+                for (int currentImage = 0; currentImage < length; currentImage++){
+                    // Get the format of the image
+                    if (file[currentImage].isEmpty()) {
+                        continue;
+
+                    }
+                    String[] splitName = file[currentImage].getOriginalFilename().split("\\.");
+
+                    int numberOfSplits = splitName.length;
+                    String format = splitName[numberOfSplits - 1];
+
+
+                    try {
+                        Log.info("Checkpoint 1------------------------");
+
+                        File FileToCheckIfExists;
+                        Path path = null;
+                        // Get the file and save it somewhere
+                        byte[] bytes = file[currentImage].getBytes();
+//                        Log.info(product.getProductId());
+                        Log.info(format);
+                        //Saving image names as ProductId +1 , ProductId+2 , ... until "ProductId"+"5"
+
+                        String [] allowedFormats = {"jpg","png","jpeg","JPG","PNG","JPEG"};
+                        String imageUrl = "https://elixir.ausgrads.academy/images/";
+                        int imageIndex=currentImage+1;
+                        //       FileToCheckIfExists = new File(IMAGES + product.getProductId() + imageIndex + "."+format);
+
+                        imageUrl=imageUrl+Result + imageIndex + "."+format;
+                        path = Paths.get(IMAGES + Result + imageIndex + "." + format);
+
+                        // SAVING Imageurls in ImageURL table , so that we can access images easily by providing the correct ProductId
+                        ImageUrl imageUrlSaver = new ImageUrl();
+
+//                        imageUrlSaver.setImageName(imageUrl); // Saving the url
+//                        imageUrlSaver.setProduct();
+//                        imageRepo.save(imageUrlSaver);
+                        Files.write(path, bytes);
+
+
+
+
+                        Log.info("Checkpoint 2------------------------");
+
+                        Log.info("Checkpoint 3------------------------");
+
+
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+        return new ResponseEntity("some",HttpStatus.OK);}
 
         @PostMapping(path = "/addImageExp") //for www-enc- forms , no need to add RequestBody orRequest Param for products
         public
