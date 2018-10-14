@@ -28,9 +28,13 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
     @Query("SELECT p from Product p order by p.name asc") //figure out how to replace ?1 with rating
     List<Product> sortByName();
 
+    @Query("select p from Product p where p.name like %?1% order by p.price")
+    List<Product> sortByPriceA(String searchKey);
 
+    @Query("select p from Product p where p.name like %?1% order by p.price desc ")
+    List<Product> sortByPriceD(String searchKey);
 
-//    @Query("SELECT p from Product p ") //figure out how to replace ?1 with rating
+    //    @Query("SELECT p from Product p ") //figure out how to replace ?1 with rating
 
 //    Page<Product> all(Pageable Page);
     //multiple entries
@@ -41,8 +45,13 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
     List<Product> findSubCategoryIdNameSorted(List<Integer> allSub );
 
 
-    @Query("SELECT p from Product p where p.subCategoryId in ?1 order by p.price")
+    @Query("SELECT p from Product p where p.subCategoryId in ?1 order by p.price ")
     List<Product> findSubCategoryIdPriceSorted(List<Integer> allSub);
+
+    @Query("SELECT p from Product p where p.subCategoryId in ?1 order by p.price desc ")
+    List<Product> findSubCategoryIdPriceSortedd(List<Integer> allSub);
+
+
     Product findProductById(int productId);
     Product findProductByProductId(String productId);
     //find id of the product where ProductId is

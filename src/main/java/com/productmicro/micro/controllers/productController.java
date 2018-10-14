@@ -324,6 +324,33 @@
                 return new ResponseEntity("Something went wrong",HttpStatus.NOT_FOUND);
             }
         }
+
+        @PostMapping(path="/SortByPrice")
+        public ResponseEntity SortByPrice(@RequestBody List <String> searchSortPrice){   // first is price , second is search
+            try{
+               String price = searchSortPrice.get(0);
+               String searchKey = searchSortPrice.get(1);
+
+                if (price.equals("Low")){
+                    Iterable<Product> pro = productRepo.sortByPriceA(searchKey);
+                    return new ResponseEntity(getArraysOfProducts(pro),HttpStatus.OK);
+                }
+                else if (price.equals("High")){
+                    Iterable<Product> pro = productRepo.sortByPriceD(searchKey);
+                    return new ResponseEntity(getArraysOfProducts(pro),HttpStatus.OK);
+                }
+                else{
+                    return new ResponseEntity("Pass either Low or High",HttpStatus.OK);
+                }
+//
+
+            }
+            catch(Exception e )
+            {
+                e.printStackTrace();
+                return new ResponseEntity("Something went wrong",HttpStatus.NOT_FOUND);
+            }
+        }
         @PostMapping(path="/SortBySubCategoryAndPrice")
         public ResponseEntity SortBySubCategoryAndPrice(@RequestBody List<Integer> allSub)
         {
