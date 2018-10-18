@@ -235,6 +235,7 @@
         }
 
         @DeleteMapping(path="/delete/{id}")
+        @Transactional
         public ResponseEntity delProduct(@PathVariable  int id) {
 
             Product exists = productRepo.findProductById(id);
