@@ -6,6 +6,7 @@
     import com.productmicro.micro.Repositories.ImageUrlRepo;
     import com.productmicro.micro.Repositories.ProductRepository;
     import org.apache.commons.logging.LogFactory;
+    import org.springframework.transaction.annotation.Transactional;
     import org.aspectj.lang.annotation.DeclareError;
     import org.springframework.beans.factory.annotation.Autowired;
     import org.springframework.boot.configurationprocessor.json.JSONObject;
