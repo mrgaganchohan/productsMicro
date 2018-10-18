@@ -36,18 +36,6 @@ public class Product {
     private double discount ;//9
 
 
-
-    @OneToMany(mappedBy = "product", fetch = FetchType.EAGER, orphanRemoval = true)
-    private List<ImageUrl> imageUrl;
-
-    public List<ImageUrl> getImageUrl() {
-        return imageUrl;
-    }
-
-    public void setImageUrl(List<ImageUrl> imageUrl) {
-        this.imageUrl = imageUrl;
-    }
-
     public String getStatus() {
         return status;
     }
