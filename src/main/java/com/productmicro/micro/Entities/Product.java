@@ -4,11 +4,13 @@ import org.springframework.context.annotation.Primary;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 @Entity
 public class Product {
     @Id
     @TableGenerator(name="product", initialValue = 0)
+
 
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "product")
     private int id;
@@ -31,7 +33,21 @@ public class Product {
     @NotNull
     private double price; //8
     @NotNull
-    private double discount ;  //9
+    private double discount ;//9
+
+
+
+    @OneToMany(mappedBy = "product", fetch = FetchType.EAGER, orphanRemoval = true)
+    private List<ImageUrl> imageUrl;
+
+    public List<ImageUrl> getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(List<ImageUrl> imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
     public String getStatus() {
         return status;
     }
@@ -115,6 +131,8 @@ public class Product {
     public double getRating() {
         return rating;
     }
+
+
 
 
 
