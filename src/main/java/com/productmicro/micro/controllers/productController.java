@@ -235,8 +235,19 @@
             return  new ResponseEntity(productSaver, HttpStatus.CREATED);
         }
 
-        @DeleteMapping(path="/delete/{id}")
-        @Transactional
+        @GetMapping(path="Gettest/{id}")
+        public ResponseEntity delProduct1(@PathVariable  int id) {
+
+
+            List<ImageUrl> result = imageRepo.findImageUrlsByProductId(id);
+            System.out.println("result is "+result.size());
+            return new ResponseEntity(".", HttpStatus.OK);
+
+
+        }
+
+            @DeleteMapping(path="/delete/{id}")
+
         public ResponseEntity delProduct(@PathVariable  int id) {
 
             Product exists = productRepo.findProductById(id);
@@ -246,6 +257,13 @@
 
             }
 
+            boolean custom = true;
+                List<ImageUrl> result = imageRepo.findImageUrlsByProductId(id);
+                int size = result.size();
+                imageRepo.deleteImageUrlsByProductId(id);
+//                for (int i=1;i<=size;i++) {
+//                    imageRepo.deleteImageUrlsById(id);
+//                }
             productRepo.deleteById(id);
             return new ResponseEntity("Deleted  successfully.", HttpStatus.OK);
         }
