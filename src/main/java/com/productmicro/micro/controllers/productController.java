@@ -6,6 +6,7 @@
     import com.productmicro.micro.Repositories.ImageUrlRepo;
     import com.productmicro.micro.Repositories.ProductRepository;
     import org.apache.commons.logging.LogFactory;
+    import org.aspectj.lang.annotation.DeclareError;
     import org.springframework.beans.factory.annotation.Autowired;
     import org.springframework.boot.configurationprocessor.json.JSONObject;
     import org.springframework.data.domain.Page;
@@ -233,7 +234,7 @@
             return  new ResponseEntity(productSaver, HttpStatus.CREATED);
         }
 
-        @GetMapping(path="/delete/{id}")
+        @DeleteMapping(path="/delete/{id}")
         public ResponseEntity delProduct(@PathVariable  int id) {
 
             Product exists = productRepo.findProductById(id);
