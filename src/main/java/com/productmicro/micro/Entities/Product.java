@@ -6,9 +6,10 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 @Entity
+@Table(name = "product")
 public class Product {
     @Id
-    @TableGenerator(name="product", initialValue = 1)
+//     @TableGenerator(name="product", initialValue = 1)
 
     @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "product")
     private int id;
