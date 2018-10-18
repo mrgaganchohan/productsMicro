@@ -8,9 +8,9 @@ import javax.validation.constraints.NotNull;
 @Entity
 public class Product {
     @Id
-    @TableGenerator(name="product", initialValue = 1)
+    @TableGenerator(name="product", initialValue = 0)
 
-    @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "product")
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "product")
     private int id;
     @Column(unique=true)
     @NotNull

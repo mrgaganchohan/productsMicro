@@ -5,9 +5,9 @@ import javax.persistence.*;
 @Entity
 public class ImageUrl {
     @Id
-    @TableGenerator(name="image_url", initialValue = 1)
+    @TableGenerator(name="image_url", initialValue = 0)
 
-    @GeneratedValue(strategy = GenerationType.IDENTITY,generator = "image_url")
+    @GeneratedValue(strategy = GenerationType.AUTO,generator = "image_url")
     private int id;
     private String imageName;
 
