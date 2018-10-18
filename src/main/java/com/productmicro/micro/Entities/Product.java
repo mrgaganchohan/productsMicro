@@ -9,7 +9,8 @@ import java.util.List;
 @Entity
 public class Product {
     @Id
-    @TableGenerator(name="product", initialValue = 0 )
+    @TableGenerator(name="product", initialValue = 0)
+
 
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "product")
     private int id;
