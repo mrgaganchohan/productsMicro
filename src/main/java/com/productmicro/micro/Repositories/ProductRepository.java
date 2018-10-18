@@ -58,7 +58,7 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
     //find id of the product where ProductId is
 //    @Query("Select p.id from Product p where p.productId=?1")
   //  int  findIdByProductId(String productId);
-//    @Transactional //research more
+    @Transactional //research more
     void deleteById(int id);
 
 
