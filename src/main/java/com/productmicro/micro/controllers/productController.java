@@ -245,7 +245,6 @@
                 return new ResponseEntity("Product  doesn't exist", HttpStatus.NOT_FOUND);
 
             }
-            imageRepo.deleteImageUrlsById(id);
 
             productRepo.deleteById(id);
             return new ResponseEntity("Deleted  successfully.", HttpStatus.OK);
